@@ -1,0 +1,12 @@
+version: '3.8'
+
+services:
+  app:
+    image: openjdk:17-jdk-slim
+    container_name: spring_boot_app
+    ports:
+      - "9090:9090"
+    volumes:
+      - .:/app
+    working_dir: /app
+    command: ./mvnw spring-boot:run

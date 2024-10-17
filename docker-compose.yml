@@ -1,0 +1,35 @@
+version: "3.7"
+services:
+  webapps:
+    image: docker.intern.sparebank1.no/dev-haproxy/master
+    network_mode: bridge
+    links:
+      - api-takterrassen
+      - proxy
+    ports:
+      - 443:443
+    environment:
+      DOMAIN_NAME: webapps.dev.sparebank1.no
+      APPLICATION_PORTS: 90, 9090
+
+  api-takterrassen:
+    image: docker.intern.sparebank1.no/dev-proxy-adapter/master
+    network_mode: bridge
+    environment:
+      URL_PATH_PATTERN: ^/api/takterrassen
+      HAPROXY_PATH_PRIORITY: 10
+      PROXY_URL_PATTERN: ^/?(api/takterrassen.*)
+      PROXY_BACKEND: http://host.docker.internal:9090/$$1
+      HOST_FIREWALL_PORT: 9090
+    extra_hosts:
+      - host.docker.internal:host-gateway
+
+  proxy:
+    image: docker.intern.sparebank1.no/rhel7-apache-proxy/master
+    network_mode: bridge
+    environment:
+      PROXY_HOST: www.test.sparebank1.no
+      HAPROXY_CHECK_PORT: 81
+      HAPROXY_CHECK_PATH: /healthcheck
+      HAPROXY_PATH_PRIORITY: 99
+      URL_PATH_PATTERN: ^/
