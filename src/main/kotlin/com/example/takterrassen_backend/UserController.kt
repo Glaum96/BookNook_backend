@@ -7,9 +7,14 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = ["http://localhost:5173"])
+@CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
 class UserController {
-    @get:GetMapping
-    val allUsers: String
-        get() =  "Users: "
+    @GetMapping
+    fun getAllUsers(): List<User> {
+        return listOf(
+            User(1, "John Doe", "john.doe@example.com"),
+            User(2, "Jane Smith", "jane.smith@example.com")
+        )
+    }
 }
+

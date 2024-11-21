@@ -11,5 +11,6 @@ import org.springframework.web.bind.annotation.RestController
 class MainController {
     @get:GetMapping
     val allUsers: String
-        get() =  "Hei på deg, fra Backenden! Jeg er skrevet i SpringBoot."
+        get() =  "Hei på deg fra Backenden! Jeg er skrevet i SpringBoot. :D"
 }
+
