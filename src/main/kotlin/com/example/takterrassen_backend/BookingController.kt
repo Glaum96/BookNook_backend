@@ -1,23 +1,21 @@
 package com.example.takterrassen_backend
 
-import com.example.takterrassen_backend.model.User
-import com.example.takterrassen_backend.model.getUsers
+import com.example.takterrassen_backend.model.Booking
+import com.example.takterrassen_backend.model.getBookings
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/bookings")
 @CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
-class UserController {
+class BookingController {
     @GetMapping
-    fun getAllUsers(): List<User> {
-        val users = getUsers()
+    fun getAllBookings(): List<Booking> {
 
-        return listOf(
-            users.elementAt(0)
-        )
+        return getBookings()
+
     }
 }
 
