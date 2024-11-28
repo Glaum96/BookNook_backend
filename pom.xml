@@ -8,7 +8,7 @@
         <version>3.3.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
-    <groupId>com.example</groupId>
+    <groupId>com</groupId>
     <artifactId>takterrassen_backend</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>takterrassen_backend</name>
@@ -149,7 +149,7 @@
                             <schemaPaths>
                                 <param>src/main/resources/graphql-client</param>
                             </schemaPaths>
-                            <packageName>com.example.takterrassen_backend.codegen</packageName>
+                            <packageName>com.takterrassen_backend.codegen</packageName>
                             <addGeneratedAnnotation>true</addGeneratedAnnotation>
                         </configuration>
                     </execution>
