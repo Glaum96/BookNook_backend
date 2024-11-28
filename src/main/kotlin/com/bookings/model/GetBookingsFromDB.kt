@@ -27,9 +27,11 @@ fun getBookings() = runBlocking {
             bookings.add(
                 Booking(
                     id = "123",
-                    from = doc.getString("from"),
-                    to = doc.getString("to"),
-                    bookerId = doc.getString("bookerId")
+                    from = doc.getDate("from"),
+                    to = doc.getDate("to"),
+                    bookerId = doc.getString("bookerId"),
+                    responsibleNumber = doc.getString("responsibleNumber"),
+                    responsibleName = doc.getString("responsibleName")
                 )
             )
         }

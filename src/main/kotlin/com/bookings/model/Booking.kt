@@ -1,3 +1,12 @@
 package com.bookings.model
 
-data class Booking(val id: String, val from: String, val to: String, val bookerId: String)
+import java.util.Date
+
+data class Booking(
+    val id: String,
+    val startTime: Date,
+    val endTime: Date,
+    val userId: String,
+    val responsibleName: String,
+    val responsibleNumber: String
+)

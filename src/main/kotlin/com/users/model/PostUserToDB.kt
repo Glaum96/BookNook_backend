@@ -13,7 +13,7 @@ fun postNewUser(newUser: User) = runBlocking {
 
     val database = mongoClient.getDatabase("Users")
     val collection = database.getCollection("Users")
-    val users = mutableListOf<User>()
+    val user = mutableListOf<User>()
 
     runBlocking {
 
@@ -40,5 +40,5 @@ fun postNewUser(newUser: User) = runBlocking {
     }
 
     mongoClient.close()
-    return@runBlocking users
+    return@runBlocking user
 }
