@@ -2,6 +2,7 @@ package com.example.takterrassen_backend
 
 import com.example.takterrassen_backend.model.User
 import com.example.takterrassen_backend.model.getUsers
+import com.example.takterrassen_backend.model.postNewUser
 import com.google.gson.Gson
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
@@ -28,6 +29,7 @@ class PostUserController {
     fun postUser(@RequestBody userJson: String): String {
         val gson = Gson()
         val user: User = gson.fromJson(userJson, User::class.java)
+        postNewUser(user)
         return user.toString()
     }
 
