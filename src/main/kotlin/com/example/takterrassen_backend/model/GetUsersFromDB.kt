@@ -10,11 +10,13 @@ import org.bson.codecs.configuration.CodecRegistries
 import org.bson.codecs.configuration.CodecRegistry
 import org.bson.codecs.pojo.PojoCodecProvider
 import kotlinx.coroutines.reactive.awaitFirstOrNull
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.toList
+import kotlinx.coroutines.reactive.asFlow
 
 fun main() {
     getUsers()
 }
-
 
 fun getUsers() = runBlocking {
 
@@ -23,25 +25,21 @@ fun getUsers() = runBlocking {
     val mongoClient = createMongoClient(uri)
 
     val database = mongoClient.getDatabase("Users")
-    // Get a collection of documents of type User
     val collection = database.getCollection("Users")
     val users = mutableListOf<User>()
 
     runBlocking {
-        val doc = collection.find(eq("name", "Jane Doe")).awaitFirstOrNull()
-        if (doc != null) {
+        val docs = collection.find().asFlow().toList()
+        for (doc in docs) {
             println(doc.toJson())
-            println("YAAAY! We found a matching document.")
-            println("NAvn: " + doc.getString("name"))
-            if (doc != null) {
-                users.add(User(
-                    id = "11",
+            users.add(
+                User(
+                    id = "123",
                     name = doc.getString("name"),
                     email = doc.getString("email")
-                ))
-            }
-        } else {
-            println("No matching documents found.")
+                )
+            )
+
         }
     }
 

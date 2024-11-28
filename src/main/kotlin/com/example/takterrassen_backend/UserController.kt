@@ -2,24 +2,38 @@ package com.example.takterrassen_backend
 
 import com.example.takterrassen_backend.model.User
 import com.example.takterrassen_backend.model.getUsers
+import com.google.gson.Gson
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/getUsers")
 @CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
-class UserController {
+class GetUserController {
     @GetMapping
     fun getAllUsers(): List<User> {
-        val users = getUsers()
-
-        return listOf(
-            users.elementAt(0)
-        )
+        return  getUsers()
     }
+
 }
+@RestController
+@RequestMapping("/api/postUsers")
+@CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
+class PostUserController {
+    @PostMapping
+    fun postUser(@RequestBody userJson: String): String {
+        val gson = Gson()
+        val user: User = gson.fromJson(userJson, User::class.java)
+        return user.toString()
+    }
+
+}
+
+
 
 
 
