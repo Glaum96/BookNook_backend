@@ -23,13 +23,12 @@ fun getBookings() = runBlocking {
     runBlocking {
         val docs = collection.find().asFlow().toList()
         for (doc in docs) {
-            println(doc.toJson())
             bookings.add(
                 Booking(
-                    id = "123",
-                    from = doc.getDate("from"),
-                    to = doc.getDate("to"),
-                    bookerId = doc.getString("bookerId"),
+                    id = doc.getObjectId("_id").toString(),
+                    startTime = doc.getDate("from"),
+                    endTime = doc.getDate("to"),
+                    userId = doc.getString("bookerId"),
                     responsibleNumber = doc.getString("responsibleNumber"),
                     responsibleName = doc.getString("responsibleName")
                 )
