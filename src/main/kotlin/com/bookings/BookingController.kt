@@ -28,6 +28,7 @@ class PostBookingController {
     fun postBooking(@RequestBody bookingJson: String): String {
         val gson = Gson()
         val booking: Booking = gson.fromJson(bookingJson, Booking::class.java)
+        postNewBooking(booking)
         return booking.toString() + " created"
     }
 

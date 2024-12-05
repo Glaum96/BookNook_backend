@@ -28,7 +28,7 @@ fun getBookings() = runBlocking {
                     id = doc.getObjectId("_id").toString(),
                     startTime = doc.getDate("from"),
                     endTime = doc.getDate("to"),
-                    userId = doc.getString("bookerId"),
+                    userId = doc.getString("userId"),
                     responsibleNumber = doc.getString("responsibleNumber"),
                     responsibleName = doc.getString("responsibleName")
                 )

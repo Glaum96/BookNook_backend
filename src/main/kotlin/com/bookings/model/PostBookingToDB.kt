@@ -16,18 +16,14 @@ fun postNewBooking(newBooking: Booking) = runBlocking {
     val booking = mutableListOf<Booking>()
 
     runBlocking {
-
-
         val userDocument = Document()
             .append("from", newBooking.startTime)
             .append("to", newBooking.endTime)
-            .append("bookerId", newBooking.userId)
+            .append("userId", newBooking.userId)
             .append("responsibleName", newBooking.responsibleName)
             .append("responsibleNumber", newBooking.responsibleNumber)
 
         collection.insertOne(userDocument).awaitFirstOrNull()
-
-
     }
 
 
