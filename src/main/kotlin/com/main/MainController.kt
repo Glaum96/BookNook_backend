@@ -11,5 +11,5 @@ import org.springframework.web.bind.annotation.RestController
 class MainController {
     @get:GetMapping
     val main: String
-        get() = "Hei på deg fra backenden!"}
+        get() = "Hei på deg fra backenden!!!!!!!"}
 

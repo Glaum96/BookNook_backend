@@ -3,9 +3,12 @@ package com.users
 import com.users.model.User
 import com.users.model.postNewUser
 import com.google.gson.Gson
+import com.login.UserService
+import com.login.model.RegisterUser
 import com.users.model.getUserFromDB
 import com.users.model.getUsersFromDb
 import com.users.model.putUser
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -26,14 +29,19 @@ class GetUsersController {
 }
 
 @RestController
-@RequestMapping("/api/postUsers")
+@RequestMapping("/api/postUser")
 @CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
 class PostUserController {
+
+    @Autowired
+    private lateinit var userService: UserService
+
     @PostMapping
     fun postUser(@RequestBody userJson: String): String {
         val gson = Gson()
-        val user: User = gson.fromJson(userJson, User::class.java)
-        postNewUser(user)
+        val user: RegisterUser = gson.fromJson(userJson, RegisterUser::class.java)
+        val encryptedPassword = userService.getEncryptedUserPassword(user.username, user.password)
+        postNewUser(user, encryptedPassword)
         return user.toString()
     }
 }
@@ -45,7 +53,6 @@ class GetUserController {
 
     @GetMapping("/{userId}")
     fun getUser(@PathVariable userId: String): User? {
-        println("getuser")
         return getUserFromDB(userId)
     }
 }
