@@ -6,7 +6,7 @@ import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.bson.Document
 import org.bson.types.ObjectId
 
-fun deleteMyBooking(bookingId: String) = runBlocking {
+fun deleteBookingInDB(bookingId: String) = runBlocking {
 
     val uri = "mongodb+srv://takterrassen:Seilduksgata6B@takterrassen.jz3qs.mongodb.net/?retryWrites=true&w=majority&appName=Takterrassen"
 

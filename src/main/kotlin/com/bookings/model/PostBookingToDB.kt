@@ -5,7 +5,7 @@ import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.bson.Document
 
-fun postNewBooking(newBooking: Booking) = runBlocking {
+fun postBookingToDB(newBooking: Booking) = runBlocking {
 
     val uri = "mongodb+srv://takterrassen:Seilduksgata6B@takterrassen.jz3qs.mongodb.net/?retryWrites=true&w=majority&appName=Takterrassen"
 
