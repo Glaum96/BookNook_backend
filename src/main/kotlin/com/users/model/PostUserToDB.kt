@@ -1,21 +1,30 @@
 package com.users.model
 
+import com.login.model.LoginCredentials
+import com.login.model.RegisterUser
 import com.main.model.createMongoClient
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.bson.Document
+import org.springframework.data.mongodb.core.mapping.Encrypted
+import kotlin.math.log
 
-fun postNewUser(newUser: User) = runBlocking {
+fun postNewUser(newUser: RegisterUser, encryptedPassword: String) = runBlocking {
 
     val uri = "mongodb+srv://takterrassen:Seilduksgata6B@takterrassen.jz3qs.mongodb.net/?retryWrites=true&w=majority&appName=Takterrassen"
 
     val mongoClient = createMongoClient(uri)
 
     val database = mongoClient.getDatabase("Users")
-    val collection = database.getCollection("Users")
-    val user = mutableListOf<User>()
+    val usersCollection = database.getCollection("Users")
+    val loginCredentialsCollection = database.getCollection("LoginCredentials")
 
     runBlocking {
+
+        val loginCredentialsDocument = Document()
+            .append("id", newUser.id)
+            .append("username", newUser.username)
+            .append("password", encryptedPassword)
 
         val userDocument = Document()
             .append("id", newUser.id)
@@ -24,23 +33,11 @@ fun postNewUser(newUser: User) = runBlocking {
             .append("apartmentNumber", newUser.apartmentNumber)
             .append("phoneNumber", newUser.phoneNumber)
 
-        collection.insertOne(userDocument).awaitFirstOrNull()
+        usersCollection.insertOne(userDocument).awaitFirstOrNull()
+        loginCredentialsCollection.insertOne(loginCredentialsDocument).awaitFirstOrNull()
 
-
-//        val docs = collection.find().asFlow().toList()
-//        for (doc in docs) {
-//            println(doc.toJson())
-//            users.add(
-//                User(
-//                    id = "123",
-//                    name = doc.getString("name"),
-//                    email = doc.getString("email")
-//                )
-//            )
-//
-//        }
     }
 
     mongoClient.close()
-    return@runBlocking user
+    return@runBlocking
 }
