@@ -21,6 +21,8 @@ fun postNewUser(newUser: User) = runBlocking {
             .append("id", newUser.id)
             .append("name", newUser.name)
             .append("email", newUser.email)
+            .append("apartmentNumber", newUser.apartmentNumber)
+            .append("phoneNumber", newUser.phoneNumber)
 
         collection.insertOne(userDocument).awaitFirstOrNull()
 
