@@ -4,17 +4,20 @@ import com.users.model.User
 import com.users.model.getUsers
 import com.users.model.postNewUser
 import com.google.gson.Gson
+import com.users.model.getUserFromDB
 import org.springframework.web.bind.annotation.CrossOrigin
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestHeader
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/getUsers")
 @CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
-class GetUserController {
+class GetUsersController {
     @GetMapping
     fun getAllUsers(): List<User> {
         return  getUsers()
@@ -32,9 +35,19 @@ class PostUserController {
         postNewUser(user)
         return user.toString()
     }
-
 }
 
+@RestController
+@RequestMapping("/api/getUser")
+@CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
+class GetUserController {
+
+    @GetMapping("/{userId}")
+    fun getUser(@PathVariable userId: String): User? {
+        println("getuser")
+        return getUserFromDB(userId)
+    }
+}
 
 
 
