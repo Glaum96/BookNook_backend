@@ -21,17 +21,16 @@ fun getUsers() = runBlocking {
             println(doc.toJson())
             users.add(
                 User(
-                    id = "123",
+                    id = doc.getObjectId("_id").toString(),
                     name = doc.getString("name"),
-                    email = doc.getString("email")
+                    email = doc.getString("email"),
+                    apartmentNumber = doc.getString("apartmentNumber"),
+                    phoneNumber = doc.getString("phoneNumber")
                 )
             )
-
         }
     }
 
     mongoClient.close()
     return@runBlocking users
 }
-
-
