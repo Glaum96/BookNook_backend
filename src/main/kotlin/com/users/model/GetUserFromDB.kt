@@ -23,6 +23,7 @@ fun getUserFromDB(userId: String): User? = runBlocking {
             id = it.getObjectId("_id").toString(),
             name = it.getString("name"),
             email = it.getString("email"),
+            age = it.getInteger("age"),
             phoneNumber = it.getString("phoneNumber"),
             apartmentNumber = it.getString("apartmentNumber")
         )

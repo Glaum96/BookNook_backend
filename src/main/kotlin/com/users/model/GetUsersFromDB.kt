@@ -1,3 +1,4 @@
+
 package com.users.model
 
 import com.main.model.createMongoClient
@@ -5,7 +6,7 @@ import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.runBlocking
 
-fun getUsers() = runBlocking {
+fun getUsersFromDb() = runBlocking {
 
     val uri = "mongodb+srv://takterrassen:Seilduksgata6B@takterrassen.jz3qs.mongodb.net/?retryWrites=true&w=majority&appName=Takterrassen"
 
@@ -18,14 +19,14 @@ fun getUsers() = runBlocking {
     runBlocking {
         val docs = collection.find().asFlow().toList()
         for (doc in docs) {
-            println(doc.toJson())
             users.add(
                 User(
                     id = doc.getObjectId("_id").toString(),
                     name = doc.getString("name"),
                     email = doc.getString("email"),
-                    apartmentNumber = doc.getString("apartmentNumber"),
-                    phoneNumber = doc.getString("phoneNumber")
+                    age = doc.getInteger("age") ?: 0,
+                    phoneNumber = doc.getString("phoneNumber") ?: "",
+                    apartmentNumber = doc.getString("apartmentNumber") ?: "",
                 )
             )
         }
