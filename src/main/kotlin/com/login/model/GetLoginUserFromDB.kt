@@ -18,7 +18,7 @@ fun getUserByUsername(username: String): LoginCredentials? = runBlocking {
 
     return@runBlocking userDoc?.let {
         LoginCredentials(
-//            id = it.getObjectId("_id").toString(),
+            id = it.getObjectId("_id").toString(),
             username = it.getString("username"),
             password = it.getString("password")
         )
