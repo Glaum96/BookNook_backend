@@ -50,7 +50,6 @@ class DeleteBookingController {
     fun deleteBooking(@PathVariable bookingId: String): String {
         return deleteBookingInDB(bookingId)
     }
-
 }
 
 
