@@ -42,7 +42,7 @@ class PostUserController {
     fun postUser(@RequestBody userJson: String): String {
         val gson = Gson()
         val user: RegisterUser = gson.fromJson(userJson, RegisterUser::class.java)
-        val encryptedPassword = userService.getEncryptedUserPassword(user.username, user.password)
+        val encryptedPassword = userService.getEncryptedUserPassword(user.email, user.password)
         postNewUser(user, encryptedPassword)
         return user.toString()
     }
