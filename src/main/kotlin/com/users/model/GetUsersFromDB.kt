@@ -24,7 +24,6 @@ fun getUsersFromDb() = runBlocking {
                     id = doc.getObjectId("_id").toString(),
                     name = doc.getString("name"),
                     email = doc.getString("email"),
-                    age = doc.getInteger("age") ?: 0,
                     phoneNumber = doc.getString("phoneNumber") ?: "",
                     apartmentNumber = doc.getString("apartmentNumber") ?: "",
                 )
