@@ -61,3 +61,6 @@ open class SecurityConfig(val userDetailsService: CustomUserDetailsService, val 
         return source
     }
 }
+
+
+//TROR GREIA ER AT JEG MÅ FINNE PÅ ID-FELTET I MODELLEN OG IKKE DEN MONGO-IDEN..... SÅ JEG FINNER IKKE BRUKERE SOME ER REGISTRERT.... MEN DETTE KLARER VI!
