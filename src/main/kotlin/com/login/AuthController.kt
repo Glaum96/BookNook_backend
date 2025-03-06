@@ -21,6 +21,9 @@ class AuthController(val authenticationManager: AuthenticationManager) {
     @Autowired
     private lateinit var userService: UserService
 
+    @Autowired
+    private lateinit var tokenService: TokenService
+
     @PostMapping("/login")
     fun login(@RequestBody loginRequest: LoginRequest): ResponseEntity<LoginResponse> {
         println("Login request received: $loginRequest")
@@ -28,8 +31,17 @@ class AuthController(val authenticationManager: AuthenticationManager) {
             ?: return ResponseEntity(LoginResponse("User not found"), HttpStatus.NOT_FOUND)
 
         return if (userService.verifyUserPassword(loginRequest.password, user.password)) {
-            val authToken = TokenService.generateToken(user.username) // Implement this method to generate the token
-            ResponseEntity(LoginResponse("Login successful", authToken), HttpStatus.OK)
+            var adminToken: String? = null
+
+            if (userService.userIsAdmin(loginRequest.username)) {
+                println("User is admin")
+                adminToken = tokenService.generateToken(user.username, tokenType = TokenType.ADMIN)
+            } else {
+                println("User is not admin")
+            }
+
+            val authToken = tokenService.generateToken(user.username, tokenType = TokenType.LOGIN)
+            ResponseEntity(LoginResponse("Login successful", authToken, adminToken, user.id), HttpStatus.OK)
         } else {
             ResponseEntity(LoginResponse("Invalid credentials"), HttpStatus.UNAUTHORIZED)
         }
@@ -47,4 +59,4 @@ class AuthController(val authenticationManager: AuthenticationManager) {
 }
 
 data class LoginRequest(val username: String, val password: String)
-data class LoginResponse(val message: String, val authToken: String? = null)
+data class LoginResponse(val message: String, val authToken: String? = null, val adminToken: String? = null, val userId: String? = null)

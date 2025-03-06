@@ -16,7 +16,6 @@ fun deleteUserFromDB(userId: String) = runBlocking {
 
     var returnText = ""
     runBlocking {
-        println(userId)
         val deleteUser = collection.deleteOne(Document("_id", ObjectId(userId))).awaitFirstOrNull()
         returnText = if (deleteUser?.deletedCount == 1L) {
             "User with ID $userId deleted successfully."

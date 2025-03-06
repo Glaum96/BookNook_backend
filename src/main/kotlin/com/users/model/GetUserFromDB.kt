@@ -15,17 +15,17 @@ fun getUserFromDB(userId: String): User? = runBlocking {
     val database = mongoClient.getDatabase("Users")
     val collection = database.getCollection("Users")
 
-    val user = collection.find(Document("_id", ObjectId(userId))).awaitFirstOrNull()
+    val user = collection.find(Document("loginObjectId", userId)).awaitFirstOrNull()
 
     mongoClient.close()
     return@runBlocking user?.let {
         User(
-            id = it.getObjectId("_id").toString(),
+            id = it.getString("loginObjectId"),
             name = it.getString("name"),
             email = it.getString("email"),
-            age = it.getInteger("age"),
             phoneNumber = it.getString("phoneNumber"),
-            apartmentNumber = it.getString("apartmentNumber")
+            apartmentNumber = it.getString("apartmentNumber"),
+            isAdmin = it.getBoolean("isAdmin") ?: false
         )
     }
 }
