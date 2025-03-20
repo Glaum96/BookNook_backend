@@ -36,10 +36,13 @@ class PostBookingController {
     fun postBooking(@RequestBody bookingJson: String): String {
         val gson = Gson()
         val booking: Booking = gson.fromJson(bookingJson, Booking::class.java)
-        postBookingToDB(booking)
-        return booking.toString() + " created"
-    }
 
+        return if (postBookingToDB(booking)) {
+            "${booking} created"
+        } else {
+            "Booking time slot is already taken"
+        }
+    }
 }
 
 @RestController
