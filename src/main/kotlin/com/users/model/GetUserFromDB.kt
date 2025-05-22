@@ -24,7 +24,8 @@ fun getUserFromDB(userId: String): User? = runBlocking {
             name = it.getString("name"),
             email = it.getString("email"),
             phoneNumber = it.getString("phoneNumber"),
-            apartmentNumber = it.getString("apartmentNumber")
+            apartmentNumber = it.getString("apartmentNumber"),
+            isAdmin = it.getBoolean("isAdmin") ?: false
         )
     }
 }

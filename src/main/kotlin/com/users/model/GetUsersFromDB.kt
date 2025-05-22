@@ -26,6 +26,7 @@ fun getUsersFromDb() = runBlocking {
                     email = doc.getString("email"),
                     phoneNumber = doc.getString("phoneNumber") ?: "",
                     apartmentNumber = doc.getString("apartmentNumber") ?: "",
+                    isAdmin = doc.getBoolean("isAdmin") ?: false
                 )
             )
         }
