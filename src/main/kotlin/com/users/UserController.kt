@@ -10,23 +10,23 @@ import com.users.model.getUserFromDB
 import com.users.model.getUsersFromDb
 import com.users.model.putUser
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.web.bind.annotation.CrossOrigin
-import org.springframework.web.bind.annotation.DeleteMapping
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PathVariable
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.PutMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/getUsers")
 @CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
 class GetUsersController {
+
+    @Autowired
+    private lateinit var userUtil: UserUtil
+
     @GetMapping
-    fun getAllUsers(): List<User> {
-        return  getUsersFromDb()
+    fun getAllUsers(@RequestHeader("Authorization") authorizationHeader: String): List<User>? {
+        if(userUtil.validateAdminAction(authorizationHeader)) {
+            return getUsersFromDb()
+        }
+
+        return null
     }
 }
 
@@ -53,9 +53,16 @@ class PostUserController {
 @CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
 class GetUserController {
 
+    @Autowired
+    private lateinit var userUtil: UserUtil
+
     @GetMapping("/{userId}")
-    fun getUser(@PathVariable userId: String): User? {
-        return getUserFromDB(userId)
+    fun getUser(@PathVariable userId: String, @RequestHeader("Authorization") authorizationHeader: String): User? {
+        if (userUtil.validateAdminOrSelfAction(userId, authorizationHeader)) {
+            return getUserFromDB(userId)
+        }
+
+        return null
     }
 }
 
@@ -64,9 +71,16 @@ class GetUserController {
 @CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
 class UserController {
 
+    @Autowired
+    private lateinit var userUtil: UserUtil
+
     @PutMapping("/{id}")
-    fun updateUser(@PathVariable id: String, @RequestBody updatedUser: User): Boolean {
-        return putUser(id, updatedUser)
+    fun updateUser(@PathVariable userId: String, @RequestBody updatedUser: User, @RequestHeader("Authorization") authorizationHeader: String): Boolean {
+        if (userUtil.validateAdminOrSelfAction(userId, authorizationHeader)) {
+            return putUser(userId, updatedUser)
+        }
+
+        return false
     }
 }
 
@@ -74,15 +88,18 @@ class UserController {
 @RequestMapping("/api/deleteUser")
 @CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
 class DeleteUserController {
+
+    @Autowired
+    private lateinit var userUtil: UserUtil
+
     @DeleteMapping("/{userId}")
-    fun deleteUser(@PathVariable userId: String): String {
-        return deleteUserFromDB(userId)
+    fun deleteUser(@PathVariable userId: String, @RequestHeader("Authorization") authorizationHeader: String): String? {
+        if (userUtil.validateAdminOrSelfAction(userId, authorizationHeader)) {
+            return deleteUserFromDB(userId)
+        }
+
+        return null
     }
 }
-
-
-
-
-
 
 

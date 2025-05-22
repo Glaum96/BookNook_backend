@@ -34,6 +34,7 @@ fun postNewUser(newUser: RegisterUser, encryptedPassword: String) = runBlocking 
             .append("email", newUser.email)
             .append("apartmentNumber", newUser.apartmentNumber)
             .append("phoneNumber", newUser.phoneNumber)
+            .append("isAdmin", false)
 
         usersCollection.insertOne(userDocument).awaitFirstOrNull()
         loginCredentialsCollection.insertOne(loginCredentialsDocument).awaitFirstOrNull()
