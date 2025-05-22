@@ -31,6 +31,7 @@ class AuthController(val authenticationManager: AuthenticationManager) {
             ?: return ResponseEntity(LoginResponse("User not found"), HttpStatus.NOT_FOUND)
 
         return if (userService.verifyUserPassword(loginRequest.password, user.password)) {
+
             var adminToken: String? = null
 
             if (userService.userIsAdmin(loginRequest.username)) {
@@ -42,6 +43,7 @@ class AuthController(val authenticationManager: AuthenticationManager) {
 
             val authToken = tokenService.generateToken(user.username, tokenType = TokenType.LOGIN)
             ResponseEntity(LoginResponse("Login successful", authToken, adminToken, user.id), HttpStatus.OK)
+
         } else {
             ResponseEntity(LoginResponse("Invalid credentials"), HttpStatus.UNAUTHORIZED)
         }
@@ -60,3 +62,4 @@ class AuthController(val authenticationManager: AuthenticationManager) {
 
 data class LoginRequest(val username: String, val password: String)
 data class LoginResponse(val message: String, val authToken: String? = null, val adminToken: String? = null, val userId: String? = null)
+
