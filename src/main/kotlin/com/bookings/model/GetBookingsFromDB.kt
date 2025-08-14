@@ -5,16 +5,18 @@ import com.mongodb.client.model.Filters
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.runBlocking
+import org.bson.conversions.Bson
+
+    val uri =
+        "mongodb+srv://takterrassen:Seilduksgata6B@takterrassen.jz3qs.mongodb.net/?retryWrites=true&w=majority&appName=Takterrassen"
 
 fun getAllBookingsFromDB() = runBlocking {
-    val uri = "mongodb+srv://takterrassen:Seilduksgata6B@takterrassen.jz3qs.mongodb.net/?retryWrites=true&w=majority&appName=Takterrassen"
 
     val mongoClient = createMongoClient(uri)
 
     val database = mongoClient.getDatabase("Bookings")
     val collection = database.getCollection("Bookings")
     val bookings = mutableListOf<Booking>()
-
 
     runBlocking {
         val docs = collection.find().asFlow().toList()
@@ -36,29 +38,23 @@ fun getAllBookingsFromDB() = runBlocking {
     return@runBlocking bookings
 }
 
-fun getMyBookingsFromDB(userId: String) = runBlocking {
-    val uri = "mongodb+srv://takterrassen:Seilduksgata6B@takterrassen.jz3qs.mongodb.net/?retryWrites=true&w=majority&appName=Takterrassen"
+fun getUserBookingsFromDB(userId: String, includePastBookings: Boolean) = runBlocking {
     val mongoClient = createMongoClient(uri)
     val database = mongoClient.getDatabase("Bookings")
     val collection = database.getCollection("Bookings")
     val bookings = mutableListOf<Booking>()
 
     runBlocking {
-        val userFilter = Filters.eq("userId", userId)
-
-        println(userId)
-        println(userFilter)
-
-        val docs = collection.find(userFilter).asFlow().toList()
-        for (doc in docs) {
+        val comingUserBookings = collection.find(getFilter(userId, includePastBookings)).asFlow().toList()
+        for (booking in comingUserBookings) {
             bookings.add(
                 Booking(
-                    id = doc.getObjectId("_id").toString(),
-                    startTime = doc.getDate("from"),
-                    endTime = doc.getDate("to"),
-                    userId = doc.getString("userId"),
-                    responsibleNumber = doc.getString("responsibleNumber"),
-                    responsibleName = doc.getString("responsibleName")
+                    id = booking.getObjectId("_id").toString(),
+                    startTime = booking.getDate("from"),
+                    endTime = booking.getDate("to"),
+                    userId = booking.getString("userId"),
+                    responsibleNumber = booking.getString("responsibleNumber"),
+                    responsibleName = booking.getString("responsibleName")
                 )
             )
         }
@@ -66,4 +62,18 @@ fun getMyBookingsFromDB(userId: String) = runBlocking {
 
     mongoClient.close()
     return@runBlocking bookings
+}
+
+private fun getFilter(userId: String, includePastBookings: Boolean): Bson {
+    val userFilter = Filters.eq("userId", userId)
+
+    if (includePastBookings) {
+        return userFilter
+    } else {
+        val timeFilter = Filters.gte("from", java.util.Date())
+        return Filters.and(
+            userFilter, timeFilter
+        )
+    }
+
 }
