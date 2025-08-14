@@ -2,7 +2,7 @@ package com.users
 
 import com.bookings.model.Booking
 import com.bookings.model.deleteBookingInDB
-import com.bookings.model.getMyBookingsFromDB
+import com.bookings.model.getUserBookingsFromDB
 import com.bookings.model.postBookingToDB
 import com.google.gson.Gson
 import org.springframework.web.bind.annotation.*
@@ -23,8 +23,8 @@ class BookingController {
 @CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
 class MyBookingController {
     @GetMapping
-    fun getMyBookings(@RequestHeader("User-Id") userId: String): List<Booking> {
-        return getMyBookingsFromDB(userId)
+    fun getMyBookings(@RequestHeader("User-Id") userId: String, @RequestHeader("includePastBookings") includePastBookings: Boolean): List<Booking> {
+        return getUserBookingsFromDB(userId, includePastBookings)
     }
 }
 
