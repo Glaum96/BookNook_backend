@@ -60,6 +60,8 @@ fun getUserBookingsFromDB(userId: String, includePastBookings: Boolean) = runBlo
         }
     }
 
+    bookings.sortByDescending {  it.startTime }
+
     mongoClient.close()
     return@runBlocking bookings
 }
@@ -70,7 +72,7 @@ private fun getFilter(userId: String, includePastBookings: Boolean): Bson {
     if (includePastBookings) {
         return userFilter
     } else {
-        val timeFilter = Filters.gte("from", java.util.Date())
+        val timeFilter = Filters.gte("to", java.util.Date())
         return Filters.and(
             userFilter, timeFilter
         )
