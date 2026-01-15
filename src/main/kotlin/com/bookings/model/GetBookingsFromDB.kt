@@ -7,8 +7,7 @@ import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.runBlocking
 import org.bson.conversions.Bson
 
-    val uri =
-        "mongodb+srv://takterrassen:Seilduksgata6B@takterrassen.jz3qs.mongodb.net/?retryWrites=true&w=majority&appName=Takterrassen"
+val uri = "mongodb+srv://booknook:***REMOVED***@booknookcluster.eicfcms.mongodb.net/?appName=BookNookCluster"
 
 fun getAllBookingsFromDB() = runBlocking {
 

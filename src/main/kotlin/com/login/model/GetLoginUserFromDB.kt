@@ -6,7 +6,7 @@ import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.bson.Document
 
 fun getUserByUsername(username: String): LoginCredentials? = runBlocking {
-    val uri = "mongodb+srv://takterrassen:Seilduksgata6B@takterrassen.jz3qs.mongodb.net/?retryWrites=true&w=majority&appName=Takterrassen"
+    val uri = "mongodb+srv://booknook:***REMOVED***@booknookcluster.eicfcms.mongodb.net/?appName=BookNookCluster"
     val mongoClient = createMongoClient(uri)
     val database = mongoClient.getDatabase("Users")
     val collection = database.getCollection("LoginCredentials")

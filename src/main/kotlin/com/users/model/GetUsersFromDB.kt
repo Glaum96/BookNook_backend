@@ -8,7 +8,7 @@ import kotlinx.coroutines.runBlocking
 
 fun getUsersFromDb() = runBlocking {
 
-    val uri = "mongodb+srv://takterrassen:Seilduksgata6B@takterrassen.jz3qs.mongodb.net/?retryWrites=true&w=majority&appName=Takterrassen"
+    val uri = "mongodb+srv://booknook:***REMOVED***@booknookcluster.eicfcms.mongodb.net/?appName=BookNookCluster"
 
     val mongoClient = createMongoClient(uri)
 
