@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/getUsers")
-@CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
 class GetUsersController {
 
     @Autowired
@@ -32,7 +31,6 @@ class GetUsersController {
 
 @RestController
 @RequestMapping("/api/postUser")
-@CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
 class PostUserController {
 
     @Autowired
@@ -50,7 +48,6 @@ class PostUserController {
 
 @RestController
 @RequestMapping("/api/getUser")
-@CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
 class GetUserController {
 
     @Autowired
@@ -68,7 +65,6 @@ class GetUserController {
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
 class UserController {
 
     @Autowired
@@ -86,7 +82,6 @@ class UserController {
 
 @RestController
 @RequestMapping("/api/deleteUser")
-@CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
 class DeleteUserController {
 
     @Autowired
@@ -101,5 +96,3 @@ class DeleteUserController {
         return null
     }
 }
-
-
