@@ -1,13 +1,14 @@
 package com.bookings.model
 
 import com.main.model.createMongoClient
+import com.main.model.getMongoDbUri
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.bson.Document
 
 fun postBookingToDB(newBooking: Booking) = runBlocking {
 
-    val uri = "mongodb+srv://booknook:bE5uEVvQYfturR2V@booknookcluster.eicfcms.mongodb.net/?appName=BookNookCluster"
+    val uri = getMongoDbUri()
 
     val mongoClient = createMongoClient(uri)
 

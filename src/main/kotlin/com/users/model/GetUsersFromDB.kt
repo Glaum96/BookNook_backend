@@ -1,14 +1,14 @@
-
 package com.users.model
 
 import com.main.model.createMongoClient
+import com.main.model.getMongoDbUri
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.runBlocking
 
 fun getUsersFromDb() = runBlocking {
 
-    val uri = "mongodb+srv://booknook:bE5uEVvQYfturR2V@booknookcluster.eicfcms.mongodb.net/?appName=BookNookCluster"
+    val uri = getMongoDbUri()
 
     val mongoClient = createMongoClient(uri)
 

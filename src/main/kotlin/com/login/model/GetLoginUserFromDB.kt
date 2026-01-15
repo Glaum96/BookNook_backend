@@ -1,12 +1,13 @@
 package com.login.model
 
 import com.main.model.createMongoClient
+import com.main.model.getMongoDbUri
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.bson.Document
 
 fun getUserByUsername(username: String): LoginCredentials? = runBlocking {
-    val uri = "mongodb+srv://booknook:bE5uEVvQYfturR2V@booknookcluster.eicfcms.mongodb.net/?appName=BookNookCluster"
+    val uri = getMongoDbUri()
     val mongoClient = createMongoClient(uri)
     val database = mongoClient.getDatabase("Users")
     val collection = database.getCollection("LoginCredentials")
