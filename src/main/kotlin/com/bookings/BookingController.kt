@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api/bookings")
-@CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
 class BookingController {
     @GetMapping
     fun getAllBookings(): List<Booking> {
@@ -20,7 +19,6 @@ class BookingController {
 
 @RestController
 @RequestMapping("/api/myBookings")
-@CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
 class MyBookingController {
     @GetMapping
     fun getMyBookings(@RequestHeader("User-Id") userId: String, @RequestHeader("includePastBookings") includePastBookings: Boolean): List<Booking> {
@@ -30,7 +28,6 @@ class MyBookingController {
 
 @RestController
 @RequestMapping("/api/postBooking")
-@CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
 class PostBookingController {
     @PostMapping
     fun postBooking(@RequestBody bookingJson: String): String {
@@ -44,7 +41,6 @@ class PostBookingController {
 
 @RestController
 @RequestMapping("/api/deleteBooking")
-@CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
 class DeleteBookingController {
     @DeleteMapping("/{bookingId}")
     fun deleteBooking(@PathVariable bookingId: String): String {
@@ -52,6 +48,3 @@ class DeleteBookingController {
     }
 
 }
-
-
-

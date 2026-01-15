@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api")
-@CrossOrigin(origins = ["http://localhost:5173"], allowedHeaders = ["*"], allowCredentials = "true")
 class AuthController(val authenticationManager: AuthenticationManager) {
 
     @Autowired
@@ -62,4 +61,3 @@ class AuthController(val authenticationManager: AuthenticationManager) {
 
 data class LoginRequest(val username: String, val password: String)
 data class LoginResponse(val message: String, val authToken: String? = null, val adminToken: String? = null, val userId: String? = null)
-
