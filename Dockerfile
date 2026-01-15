@@ -10,10 +10,13 @@ COPY pom.xml .
 # Download dependencies
 RUN mvn dependency:go-offline -B || true
 
-# Copy Maven wrapper and source code
+# Copy all source code and resources
 COPY mvnw .
 COPY .mvn .mvn
 COPY src src
+
+# Create graphql-client directory if it doesn't exist (required by Maven plugin)
+RUN mkdir -p src/main/resources/graphql-client
 
 # Build the application using Maven directly (not wrapper)
 RUN mvn clean package -DskipTests
