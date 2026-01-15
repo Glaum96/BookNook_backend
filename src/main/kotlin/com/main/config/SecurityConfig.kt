@@ -53,7 +53,13 @@ open class SecurityConfig(val userDetailsService: CustomUserDetailsService, val 
     open fun corsConfigurationSource(): org.springframework.web.cors.CorsConfigurationSource {
         val source = org.springframework.web.cors.UrlBasedCorsConfigurationSource()
         val config = org.springframework.web.cors.CorsConfiguration()
-        config.allowedOrigins = listOf("http://localhost:5173")
+        config.allowedOrigins = listOf(
+            "http://localhost:5173",
+            "https://booknook.no",
+            "https://www.booknook.no",
+            "http://booknook.no",
+            "http://www.booknook.no"
+        )
         config.allowedMethods = listOf("GET", "POST", "PUT", "DELETE", "OPTIONS")
         config.allowedHeaders = listOf("*")
         config.allowCredentials = true
