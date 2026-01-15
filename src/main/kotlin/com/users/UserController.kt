@@ -40,6 +40,12 @@ class PostUserController {
     fun postUser(@RequestBody userJson: String): String {
         val gson = Gson()
         val user: RegisterUser = gson.fromJson(userJson, RegisterUser::class.java)
+
+        val userIsValid = userService.validateNewUser(user)
+        if (!userIsValid) {
+            return "Invalid user data"
+        }
+
         val encryptedPassword = userService.getEncryptedUserPassword(user.email, user.password)
         postNewUser(user, encryptedPassword)
         return user.toString()
