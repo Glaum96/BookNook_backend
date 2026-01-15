@@ -3,6 +3,7 @@ package com.users.model
 import com.login.model.LoginCredentials
 import com.login.model.RegisterUser
 import com.main.model.createMongoClient
+import com.main.model.getMongoDbUri
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import org.bson.Document
@@ -12,7 +13,7 @@ import kotlin.math.log
 
 fun postNewUser(newUser: RegisterUser, encryptedPassword: String) = runBlocking {
 
-    val uri = "mongodb+srv://booknook:***REMOVED***@booknookcluster.eicfcms.mongodb.net/?appName=BookNookCluster"
+    val uri = getMongoDbUri()
 
     val mongoClient = createMongoClient(uri)
 

@@ -1,16 +1,16 @@
 package com.bookings.model
 
 import com.main.model.createMongoClient
+import com.main.model.getMongoDbUri
 import com.mongodb.client.model.Filters
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.runBlocking
 import org.bson.conversions.Bson
 
-val uri = "mongodb+srv://booknook:***REMOVED***@booknookcluster.eicfcms.mongodb.net/?appName=BookNookCluster"
-
 fun getAllBookingsFromDB() = runBlocking {
 
+    val uri = getMongoDbUri()
     val mongoClient = createMongoClient(uri)
 
     val database = mongoClient.getDatabase("Bookings")
@@ -38,6 +38,7 @@ fun getAllBookingsFromDB() = runBlocking {
 }
 
 fun getUserBookingsFromDB(userId: String, includePastBookings: Boolean) = runBlocking {
+    val uri = getMongoDbUri()
     val mongoClient = createMongoClient(uri)
     val database = mongoClient.getDatabase("Bookings")
     val collection = database.getCollection("Bookings")
