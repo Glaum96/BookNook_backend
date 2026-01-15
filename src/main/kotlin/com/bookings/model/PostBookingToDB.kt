@@ -7,7 +7,7 @@ import org.bson.Document
 
 fun postBookingToDB(newBooking: Booking) = runBlocking {
 
-    val uri = "mongodb+srv://takterrassen:Seilduksgata6B@takterrassen.jz3qs.mongodb.net/?retryWrites=true&w=majority&appName=Takterrassen"
+    val uri = "mongodb+srv://booknook:bE5uEVvQYfturR2V@booknookcluster.eicfcms.mongodb.net/?appName=BookNookCluster"
 
     val mongoClient = createMongoClient(uri)
 
