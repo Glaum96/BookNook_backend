@@ -2,6 +2,7 @@ package com.login
 
 import com.login.model.LoginCredentials
 import com.login.model.RegisterUser
+import com.login.model.ValidationResult
 import com.login.model.getUserByUsername
 import com.users.model.getUserFromDB
 import org.springframework.beans.factory.annotation.Autowired
@@ -13,6 +14,9 @@ class UserService {
 
     @Autowired
     private lateinit var passwordEncoder: PasswordEncoder
+
+    @Autowired
+    private lateinit var passwordValidator: PasswordValidator
 
     fun getEncryptedUserPassword(username: String, rawPassword: String): String {
         val encryptedPassword = passwordEncoder.encode(rawPassword) ?: throw Exception("Password encryption failed")
@@ -31,22 +35,36 @@ class UserService {
         return getUserFromDB(userName)?.isAdmin ?: false
     }
 
-    fun validateNewUser(user: RegisterUser): Boolean {
-        if (user.name.isBlank() || user.email.isBlank() || user.password.isBlank()) {
-            return false
+    fun validateNewUser(user: RegisterUser): ValidationResult {
+        val errors = mutableListOf<String>()
+
+        if (user.name.isBlank()) {
+            errors.add("Name is required")
         }
 
-        val emailAddressAlreadyExists = getUserByUsername(user.email) != null
-        if (emailAddressAlreadyExists) {
-            return false
+        if (user.email.isBlank()) {
+            errors.add("Email is required")
+        } else {
+            val emailHasValidFormat = Regex("^[A-Za-z0-9](.*)([@])(.+)(\\.)(.+)").matches(user.email)
+            if (!emailHasValidFormat) {
+                errors.add("Invalid email format")
+            }
+
+            val emailAddressAlreadyExists = getUserByUsername(user.email) != null
+            if (emailAddressAlreadyExists) {
+                errors.add("Email address is already registered")
+            }
         }
 
-        val emailHasValidFormat = Regex("^[A-Za-z0-9](.*)([@])(.+)(\\.)(.+)").matches(user.email)
-        if (!emailHasValidFormat) {
-            return false
+        val passwordResult = passwordValidator.validate(user.password)
+        if (!passwordResult.isValid) {
+            errors.addAll(passwordResult.errors)
         }
 
-        // Additional validation logic can be added here (e.g., email format, password strength)
-        return true
+        return if (errors.isEmpty()) {
+            ValidationResult.success()
+        } else {
+            ValidationResult.failure(errors)
+        }
     }
 }
