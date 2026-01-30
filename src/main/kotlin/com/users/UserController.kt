@@ -10,6 +10,8 @@ import com.users.model.getUserFromDB
 import com.users.model.getUsersFromDb
 import com.users.model.putUser
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -37,12 +39,31 @@ class PostUserController {
     private lateinit var userService: UserService
 
     @PostMapping
-    fun postUser(@RequestBody userJson: String): String {
+    fun postUser(@RequestBody userJson: String): ResponseEntity<Map<String, Any>> {
         val gson = Gson()
         val user: RegisterUser = gson.fromJson(userJson, RegisterUser::class.java)
+
+        val validationResult = userService.validateNewUser(user)
+        if (!validationResult.isValid) {
+            return ResponseEntity(
+                mapOf(
+                    "success" to false,
+                    "errors" to validationResult.errors
+                ),
+                HttpStatus.BAD_REQUEST
+            )
+        }
+
         val encryptedPassword = userService.getEncryptedUserPassword(user.email, user.password)
         postNewUser(user, encryptedPassword)
-        return user.toString()
+
+        return ResponseEntity(
+            mapOf(
+                "success" to true,
+                "message" to "User registered successfully"
+            ),
+            HttpStatus.CREATED
+        )
     }
 }
 
