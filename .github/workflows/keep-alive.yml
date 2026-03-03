@@ -15,6 +15,6 @@ jobs:
           REQUEST_ID=$(uuidgen || cat /proc/sys/kernel/random/uuid)
           curl -fsS --max-time 30 --retry 2 --retry-delay 5 \
             -H "X-Request-ID: $REQUEST_ID" \
-            "https://booknook-backend.onrender.com/" \
+            "https://booknook-backend-cr3h.onrender.com/" \
             -o /dev/null -w "HTTP %{http_code} in %{time_total}s\n" \
             || echo "Ping failed (service may be waking up)"
