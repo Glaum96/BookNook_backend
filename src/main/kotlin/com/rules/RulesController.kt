@@ -17,7 +17,7 @@ class RulesController {
     private lateinit var userUtil: UserUtil
 
     @GetMapping
-    fun getRules(@RequestHeader("Authorization") authorizationHeader: String): List<Rule> {
+    fun getRules(): List<Rule> {
         return getRulesFromDB()
     }
 
