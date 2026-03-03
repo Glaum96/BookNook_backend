@@ -5,6 +5,9 @@ import com.bookings.model.deleteBookingInDB
 import com.bookings.model.getUserBookingsFromDB
 import com.bookings.model.postBookingToDB
 import com.google.gson.Gson
+import com.rules.model.validateBookingAgainstRules
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 
 @RestController
@@ -30,11 +33,14 @@ class MyBookingController {
 @RequestMapping("/api/postBooking")
 class PostBookingController {
     @PostMapping
-    fun postBooking(@RequestBody bookingJson: String): String {
-        val gson = Gson()
-        val booking: Booking = gson.fromJson(bookingJson, Booking::class.java)
+    fun postBooking(@RequestBody bookingJson: String): ResponseEntity<Map<String, Any>> {
+        val booking: Booking = Gson().fromJson(bookingJson, Booking::class.java)
+        val validation = validateBookingAgainstRules(booking)
+        if (!validation.isValid) {
+            return ResponseEntity(mapOf("success" to false, "errors" to validation.errors), HttpStatus.BAD_REQUEST)
+        }
         postBookingToDB(booking)
-        return booking.toString() + " created"
+        return ResponseEntity(mapOf("success" to true), HttpStatus.CREATED)
     }
 
 }
