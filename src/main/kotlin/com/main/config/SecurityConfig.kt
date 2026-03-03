@@ -37,7 +37,7 @@ open class SecurityConfig(val userDetailsService: CustomUserDetailsService, val 
             .cors { it.configurationSource(corsConfigurationSource()) }
             .authorizeHttpRequests { authz ->
                 authz
-                    .requestMatchers("/", "/api/postUser", "/api/login").permitAll() // Allow access to the login endpoint without authentication
+                    .requestMatchers("/", "/api/postUser", "/api/login", "/api/checkEmail").permitAll() // Allow access to the login endpoint without authentication
                     .anyRequest().authenticated()
             }
             .sessionManagement { it.sessionCreationPolicy(SessionCreationPolicy.STATELESS) }

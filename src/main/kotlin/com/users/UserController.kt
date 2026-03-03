@@ -32,6 +32,24 @@ class GetUsersController {
 }
 
 @RestController
+@RequestMapping("/api/checkEmail")
+class CheckEmailController {
+
+    @Autowired
+    private lateinit var userService: UserService
+
+    @GetMapping
+    fun checkEmail(@RequestParam email: String): ResponseEntity<Map<String, Any>> {
+        val exists = userService.findUserByUsername(email) != null
+        return if (exists) {
+            ResponseEntity(mapOf("available" to false), HttpStatus.CONFLICT)
+        } else {
+            ResponseEntity(mapOf("available" to true), HttpStatus.OK)
+        }
+    }
+}
+
+@RestController
 @RequestMapping("/api/postUser")
 class PostUserController {
 
