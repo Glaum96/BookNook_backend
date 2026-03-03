@@ -62,4 +62,8 @@ JWT tokens with two types: LOGIN (standard user) and ADMIN (elevated privileges)
 
 ### Deployment
 
-Deployed to Render.com using the provided `Dockerfile` (multi-stage build with Eclipse Temurin). Health check via `/actuator/health`.
+Deployed to Render.com free tier using the provided `Dockerfile` (multi-stage build with Eclipse Temurin). Health check via `/actuator/health`.
+
+### Keep-Alive Workflow
+
+Render.com free tier spins down after ~15 min of inactivity. A GitHub Actions workflow (`.github/workflows/keep-alive.yml`) pings `GET /` every 14 minutes to prevent this. Requires the repo to be **public** for unlimited Actions minutes. Can also be triggered manually from the Actions tab.
