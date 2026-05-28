@@ -33,6 +33,8 @@ fun getAllBookingsFromDB() = runBlocking {
         }
     }
 
+    bookings.sortByDescending { it.startTime }
+
     mongoClient.close()
     return@runBlocking bookings
 }
