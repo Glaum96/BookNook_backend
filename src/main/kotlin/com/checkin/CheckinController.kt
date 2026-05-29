@@ -1,5 +1,7 @@
 package com.checkin
 
+import com.audit.AuditService
+import com.audit.model.AuditAction
 import com.checkin.model.*
 import com.users.UserUtil
 import jakarta.servlet.http.HttpServletResponse
@@ -11,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile
 
 @RestController
 @RequestMapping("/api/bookings")
-class CheckinController(private val userUtil: UserUtil) {
+class CheckinController(private val userUtil: UserUtil, private val auditService: AuditService) {
 
     @PostMapping("/{bookingId}/checkin", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
     fun uploadCheckin(
@@ -24,7 +26,7 @@ class CheckinController(private val userUtil: UserUtil) {
             !userUtil.validateAdminAction(authHeader)) {
             return ResponseEntity(mapOf("error" to "Ingen tilgang"), HttpStatus.FORBIDDEN)
         }
-        return uploadImage(bookingId, userId, "CHECK_IN", file)
+        return uploadImage(bookingId, userId, "CHECK_IN", file, authHeader)
     }
 
     @PostMapping("/{bookingId}/checkout", consumes = [MediaType.MULTIPART_FORM_DATA_VALUE])
@@ -38,14 +40,15 @@ class CheckinController(private val userUtil: UserUtil) {
             !userUtil.validateAdminAction(authHeader)) {
             return ResponseEntity(mapOf("error" to "Ingen tilgang"), HttpStatus.FORBIDDEN)
         }
-        return uploadImage(bookingId, userId, "CHECK_OUT", file)
+        return uploadImage(bookingId, userId, "CHECK_OUT", file, authHeader)
     }
 
     private fun uploadImage(
         bookingId: String,
         userId: String,
         type: String,
-        file: MultipartFile
+        file: MultipartFile,
+        authHeader: String
     ): ResponseEntity<Map<String, Any>> {
         return try {
             val fileId = uploadCheckinImage(
@@ -56,6 +59,9 @@ class CheckinController(private val userUtil: UserUtil) {
                 contentType = file.contentType ?: "application/octet-stream",
                 inputStream = file.inputStream
             )
+            val action = if (type == "CHECK_IN") AuditAction.CHECKIN_IMAGE_UPLOADED else AuditAction.CHECKOUT_IMAGE_UPLOADED
+            val label = if (type == "CHECK_IN") "Check-in bilde lastet opp" else "Check-out bilde lastet opp"
+            auditService.log(authHeader, action, bookingId, label)
             ResponseEntity(mapOf("success" to true, "imageId" to fileId), HttpStatus.CREATED)
         } catch (e: CheckinTimeWindowException) {
             ResponseEntity(mapOf("error" to (e.message ?: "Ugyldig tidspunkt")), HttpStatus.BAD_REQUEST)
@@ -85,7 +91,7 @@ class CheckinController(private val userUtil: UserUtil) {
 
 @RestController
 @RequestMapping("/api/images")
-class ImageDownloadController(private val userUtil: UserUtil) {
+class ImageDownloadController(private val userUtil: UserUtil, private val auditService: AuditService) {
 
     @GetMapping("/{imageId}")
     fun getImage(
@@ -125,6 +131,7 @@ class ImageDownloadController(private val userUtil: UserUtil) {
             return ResponseEntity(mapOf("error" to "Ingen tilgang"), HttpStatus.FORBIDDEN)
         }
         deleteCheckinImage(imageId)
+        auditService.log(authHeader, AuditAction.CHECKIN_IMAGE_DELETED, imageId, "Check-in/out bilde slettet")
         return ResponseEntity.ok(mapOf("success" to true))
     }
 }

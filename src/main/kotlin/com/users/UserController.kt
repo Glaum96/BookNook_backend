@@ -1,5 +1,7 @@
 package com.users
 
+import com.audit.AuditService
+import com.audit.model.AuditAction
 import com.users.model.User
 import com.users.model.postNewUser
 import com.google.gson.Gson
@@ -75,6 +77,14 @@ class PostUserController {
         val encryptedPassword = userService.getEncryptedUserPassword(user.email, user.password)
         postNewUser(user, encryptedPassword)
 
+        com.audit.model.writeAuditLog(
+            AuditAction.USER_REGISTERED,
+            performedByUserId = "",
+            performedByName = user.name,
+            targetId = user.email,
+            details = "Ny bruker registrert: ${user.name} (${user.email})"
+        )
+
         return ResponseEntity(
             mapOf(
                 "success" to true,
@@ -109,10 +119,15 @@ class UserController {
     @Autowired
     private lateinit var userUtil: UserUtil
 
+    @Autowired
+    private lateinit var auditService: AuditService
+
     @PutMapping("/{id}")
     fun updateUser(@PathVariable userId: String, @RequestBody updatedUser: User, @RequestHeader("Authorization") authorizationHeader: String): Boolean {
         if (userUtil.validateAdminOrSelfAction(userId, authorizationHeader)) {
-            return putUser(userId, updatedUser)
+            val result = putUser(userId, updatedUser)
+            if (result) auditService.log(authorizationHeader, AuditAction.USER_UPDATED, userId, "Brukerprofil oppdatert")
+            return result
         }
 
         return false
@@ -126,9 +141,13 @@ class DeleteUserController {
     @Autowired
     private lateinit var userUtil: UserUtil
 
+    @Autowired
+    private lateinit var auditService: AuditService
+
     @DeleteMapping("/{userId}")
     fun deleteUser(@PathVariable userId: String, @RequestHeader("Authorization") authorizationHeader: String): String? {
         if (userUtil.validateAdminOrSelfAction(userId, authorizationHeader)) {
+            auditService.log(authorizationHeader, AuditAction.USER_DELETED, userId, "Bruker slettet")
             return deleteUserFromDB(userId)
         }
 
