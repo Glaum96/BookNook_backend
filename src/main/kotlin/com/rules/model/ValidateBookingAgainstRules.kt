@@ -3,6 +3,8 @@ package com.rules.model
 import com.bookings.model.Booking
 import com.bookings.model.getUserBookingsFromDB
 import com.login.model.ValidationResult
+import com.suspension.model.getActiveSuspensionForUser
+import java.text.SimpleDateFormat
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.Date
@@ -26,6 +28,12 @@ fun validateBookingAgainstRules(booking: Booking): ValidationResult {
                 }
             }
         }
+    }
+
+    val suspension = getActiveSuspensionForUser(booking.userId)
+    if (suspension != null) {
+        val fmt = SimpleDateFormat("dd.MM.yyyy")
+        errors.add("Du er suspendert fra å opprette bookinger frem til ${fmt.format(suspension.suspendedUntil)}")
     }
 
     return if (errors.isEmpty()) ValidationResult.success() else ValidationResult.failure(errors)
