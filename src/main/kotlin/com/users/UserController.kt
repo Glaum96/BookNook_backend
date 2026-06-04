@@ -11,6 +11,7 @@ import com.users.model.deleteUserFromDB
 import com.users.model.getUserFromDB
 import com.users.model.getUsersFromDb
 import com.users.model.putUser
+import com.users.model.setUserAdmin
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -123,7 +124,7 @@ class UserController {
     private lateinit var auditService: AuditService
 
     @PutMapping("/{id}")
-    fun updateUser(@PathVariable userId: String, @RequestBody updatedUser: User, @RequestHeader("Authorization") authorizationHeader: String): Boolean {
+    fun updateUser(@PathVariable("id") userId: String, @RequestBody updatedUser: User, @RequestHeader("Authorization") authorizationHeader: String): Boolean {
         if (userUtil.validateAdminOrSelfAction(userId, authorizationHeader)) {
             val result = putUser(userId, updatedUser)
             if (result) auditService.log(authorizationHeader, AuditAction.USER_UPDATED, userId, "Brukerprofil oppdatert")
@@ -131,6 +132,39 @@ class UserController {
         }
 
         return false
+    }
+}
+
+@RestController
+@RequestMapping("/api/users")
+class SetAdminController {
+
+    @Autowired
+    private lateinit var userUtil: UserUtil
+
+    @Autowired
+    private lateinit var auditService: AuditService
+
+    @PutMapping("/{id}/admin")
+    fun setAdmin(
+        @PathVariable id: String,
+        @RequestBody body: Map<String, Boolean>,
+        @RequestHeader("Authorization") authorizationHeader: String
+    ): ResponseEntity<Map<String, Any>> {
+        if (!userUtil.validateAdminAction(authorizationHeader)) {
+            return ResponseEntity(mapOf("success" to false, "error" to "Ingen tilgang"), HttpStatus.FORBIDDEN)
+        }
+        if (userUtil.requestingUserIsSameAsTargetUser(id, authorizationHeader)) {
+            return ResponseEntity(mapOf("success" to false, "error" to "Kan ikke endre egen admin-status"), HttpStatus.FORBIDDEN)
+        }
+        val isAdmin = body["isAdmin"] ?: return ResponseEntity(mapOf("success" to false, "error" to "Mangler isAdmin-felt"), HttpStatus.BAD_REQUEST)
+        val result = setUserAdmin(id, isAdmin)
+        if (result) {
+            val label = if (isAdmin) "gitt admin-tilgang" else "fjernet admin-tilgang"
+            auditService.log(authorizationHeader, AuditAction.USER_ADMIN_CHANGED, id, "Bruker $label")
+        }
+        return if (result) ResponseEntity(mapOf("success" to true), HttpStatus.OK)
+        else ResponseEntity(mapOf("success" to false, "error" to "Oppdatering feilet"), HttpStatus.INTERNAL_SERVER_ERROR)
     }
 }
 

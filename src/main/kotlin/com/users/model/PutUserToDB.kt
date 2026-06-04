@@ -29,3 +29,18 @@ fun putUser(userId: String, updatedUser: User): Boolean = runBlocking {
     mongoClient.close()
     return@runBlocking updateResult?.modifiedCount == 1L
 }
+
+fun setUserAdmin(userId: String, isAdmin: Boolean): Boolean = runBlocking {
+    val uri = getMongoDbUri()
+    val mongoClient = createMongoClient(uri)
+    val database = mongoClient.getDatabase("Users")
+    val collection = database.getCollection("Users")
+
+    val updateResult = collection.updateOne(
+        Document("_id", ObjectId(userId)),
+        Document("\$set", Document("isAdmin", isAdmin))
+    ).awaitFirstOrNull()
+
+    mongoClient.close()
+    updateResult?.modifiedCount == 1L
+}
