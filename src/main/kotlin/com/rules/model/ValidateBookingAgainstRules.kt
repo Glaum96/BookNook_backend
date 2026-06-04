@@ -1,5 +1,6 @@
 package com.rules.model
 
+import com.blockeddates.model.getBlockedDatesFromDB
 import com.bookings.model.Booking
 import com.bookings.model.getUserBookingsFromDB
 import com.login.model.ValidationResult
@@ -87,6 +88,14 @@ fun validateBookingAgainstRules(booking: Booking): ValidationResult {
         startCal.get(java.util.Calendar.DAY_OF_YEAR) == endCal.get(java.util.Calendar.DAY_OF_YEAR)
     if (!sameDay) {
         errors.add("En booking kan ikke strekke seg over flere dager")
+    }
+
+    val bookingDateStr = SimpleDateFormat("yyyy-MM-dd").format(booking.startTime)
+    val blockedDates = getBlockedDatesFromDB()
+    val blocked = blockedDates.find { it.date == bookingDateStr }
+    if (blocked != null) {
+        val label = blocked.label ?: blocked.date
+        errors.add("Datoen $bookingDateStr er reservert og kan ikke bookes ($label)")
     }
 
     val suspension = getActiveSuspensionForUser(booking.userId)
