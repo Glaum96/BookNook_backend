@@ -5,7 +5,6 @@ import com.main.model.getMongoDbUri
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.runBlocking
 import org.bson.Document
-import org.bson.types.ObjectId
 
 fun putUser(userId: String, updatedUser: User): Boolean = runBlocking {
 
@@ -17,7 +16,7 @@ fun putUser(userId: String, updatedUser: User): Boolean = runBlocking {
     val collection = database.getCollection("Users")
 
     val updateResult = collection.updateOne(
-        Document("_id", ObjectId(userId)),
+        Document("loginObjectId", userId),
         Document("\$set", Document()
             .append("name", updatedUser.name)
             .append("email", updatedUser.email)
@@ -37,7 +36,7 @@ fun setUserAdmin(userId: String, isAdmin: Boolean): Boolean = runBlocking {
     val collection = database.getCollection("Users")
 
     val updateResult = collection.updateOne(
-        Document("_id", ObjectId(userId)),
+        Document("loginObjectId", userId),
         Document("\$set", Document("isAdmin", isAdmin))
     ).awaitFirstOrNull()
 

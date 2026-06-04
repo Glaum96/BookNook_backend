@@ -21,7 +21,7 @@ fun getUsersFromDb() = runBlocking {
         for (doc in docs) {
             users.add(
                 User(
-                    id = doc.getObjectId("_id").toString(),
+                    id = doc.getString("loginObjectId"),
                     name = doc.getString("name"),
                     email = doc.getString("email"),
                     phoneNumber = doc.getString("phoneNumber") ?: "",

@@ -5,7 +5,6 @@ import com.main.model.getMongoDbUri
 import kotlinx.coroutines.reactive.awaitFirstOrNull
 import kotlinx.coroutines.runBlocking
 import org.bson.Document
-import org.bson.types.ObjectId
 
 fun deleteUserFromDB(userId: String) = runBlocking {
 
@@ -17,7 +16,7 @@ fun deleteUserFromDB(userId: String) = runBlocking {
 
     var returnText = ""
     runBlocking {
-        val deleteUser = collection.deleteOne(Document("_id", ObjectId(userId))).awaitFirstOrNull()
+        val deleteUser = collection.deleteOne(Document("loginObjectId", userId)).awaitFirstOrNull()
         returnText = if (deleteUser?.deletedCount == 1L) {
             "User with ID $userId deleted successfully."
         } else {
