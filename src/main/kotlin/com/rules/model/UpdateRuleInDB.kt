@@ -9,7 +9,7 @@ import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.runBlocking
 import org.bson.Document
 
-fun updateRuleInDB(ruleId: String, enabled: Boolean) = runBlocking {
+fun updateRuleInDB(ruleId: String, enabled: Boolean, value: Int?) = runBlocking {
     val uri = getMongoDbUri()
     val mongoClient = createMongoClient(uri)
 
@@ -20,6 +20,7 @@ fun updateRuleInDB(ruleId: String, enabled: Boolean) = runBlocking {
     val replacement = Document()
         .append("id", ruleId)
         .append("enabled", enabled)
+    if (value != null) replacement.append("value", value)
 
     collection.replaceOne(filter, replacement, ReplaceOptions().upsert(true)).asFlow().toList()
 

@@ -8,8 +8,8 @@ import kotlinx.coroutines.runBlocking
 import org.bson.Document
 
 private val definitions = mapOf(
-    "MAX_ACTIVE_BOOKINGS" to Triple("Maks aktive bookinger", "En bruker kan ha maks 2 aktive bookinger om gangen", 2),
-    "MAX_BOOKING_FUTURE_DAYS" to Triple("Maks dager frem i tid", "En booking kan maks opprettes 7 dager frem i tid", 7)
+    "MAX_ACTIVE_BOOKINGS" to Triple("Maks aktive bookinger", "Maks antall aktive bookinger per bruker", 2),
+    "MAX_BOOKING_FUTURE_DAYS" to Triple("Maks dager frem i tid", "Hvor langt frem i tid en bruker kan opprette bookinger", 7)
 )
 
 fun getRulesFromDB(): List<Rule> = runBlocking {
@@ -26,6 +26,7 @@ fun getRulesFromDB(): List<Rule> = runBlocking {
             Document()
                 .append("id", id)
                 .append("enabled", true)
+                .append("value", triple.third)
         }
         seedDocs.forEach { doc ->
             runBlocking { collection.insertOne(doc).asFlow().toList() }
@@ -36,19 +37,23 @@ fun getRulesFromDB(): List<Rule> = runBlocking {
         }
     }
 
-    val enabledById = docs.associate { doc ->
-        doc.getString("id") to (doc.getBoolean("enabled") ?: true)
+    val stateById = docs.associate { doc ->
+        doc.getString("id") to Pair(
+            doc.getBoolean("enabled") ?: true,
+            doc.getInteger("value")
+        )
     }
 
     mongoClient.close()
 
     definitions.map { (id, triple) ->
+        val state = stateById[id]
         Rule(
             id = id,
             name = triple.first,
             description = triple.second,
-            enabled = enabledById[id] ?: true,
-            value = triple.third
+            enabled = state?.first ?: true,
+            value = state?.second ?: triple.third
         )
     }
 }

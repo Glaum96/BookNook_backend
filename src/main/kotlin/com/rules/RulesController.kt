@@ -21,22 +21,19 @@ class RulesController {
         return getRulesFromDB()
     }
 
+    data class UpdateRuleRequest(val enabled: Boolean, val value: Int? = null)
+
     @PutMapping("/{ruleId}")
     fun updateRule(
         @PathVariable ruleId: String,
-        @RequestBody body: Map<String, Boolean>,
+        @RequestBody body: UpdateRuleRequest,
         @RequestHeader("Authorization") authorizationHeader: String
     ): ResponseEntity<Map<String, Any>> {
         if (!userUtil.validateAdminAction(authorizationHeader)) {
             return ResponseEntity(mapOf("success" to false, "message" to "Forbidden"), HttpStatus.FORBIDDEN)
         }
 
-        val enabled = body["enabled"] ?: return ResponseEntity(
-            mapOf("success" to false, "message" to "Missing 'enabled' field"),
-            HttpStatus.BAD_REQUEST
-        )
-
-        updateRuleInDB(ruleId, enabled)
+        updateRuleInDB(ruleId, body.enabled, body.value)
         return ResponseEntity(mapOf("success" to true), HttpStatus.OK)
     }
 }
