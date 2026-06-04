@@ -12,7 +12,8 @@ data class RuleDefinition(val name: String, val description: String, val default
 private val definitions = mapOf(
     "MAX_ACTIVE_BOOKINGS" to RuleDefinition("Maks aktive bookinger", "Maks antall aktive bookinger per bruker", 2),
     "MAX_BOOKING_FUTURE_DAYS" to RuleDefinition("Maks dager frem i tid", "Hvor langt frem i tid en bruker kan opprette bookinger", 7),
-    "MAX_HOURS_PER_PERIOD" to RuleDefinition("Maks timer per periode", "Begrenser antall bookede timer per bruker i en kalenderperiode", 20, "month")
+    "MAX_HOURS_PER_PERIOD" to RuleDefinition("Maks timer per periode", "Begrenser antall bookede timer per bruker i en kalenderperiode", 20, "month"),
+    "MAX_BOOKING_DURATION_HOURS" to RuleDefinition("Maks varighet per booking", "Maks antall timer en enkelt booking kan vare", 4)
 )
 
 fun getRulesFromDB(): List<Rule> = runBlocking {

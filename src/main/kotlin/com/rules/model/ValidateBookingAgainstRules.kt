@@ -60,6 +60,12 @@ fun validateBookingAgainstRules(booking: Booking): ValidationResult {
                     if (booking.startTime.after(maxDate))
                         errors.add("Bookinger kan ikke opprettes mer enn ${rule.value} dager frem i tid")
                 }
+                "MAX_BOOKING_DURATION_HOURS" -> {
+                    val durationHours = (booking.endTime.time - booking.startTime.time) / 3_600_000.0
+                    if (durationHours > rule.value) {
+                        errors.add("En booking kan ikke vare mer enn ${rule.value} timer")
+                    }
+                }
                 "MAX_HOURS_PER_PERIOD" -> {
                     val periodStart = getPeriodStart(rule)
                     val usedHours = getUserBookingsFromDB(booking.userId, true)
