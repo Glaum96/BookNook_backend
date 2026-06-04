@@ -30,6 +30,14 @@ fun validateBookingAgainstRules(booking: Booking): ValidationResult {
         }
     }
 
+    val startCal = java.util.Calendar.getInstance().apply { time = booking.startTime }
+    val endCal = java.util.Calendar.getInstance().apply { time = booking.endTime }
+    val sameDay = startCal.get(java.util.Calendar.YEAR) == endCal.get(java.util.Calendar.YEAR) &&
+        startCal.get(java.util.Calendar.DAY_OF_YEAR) == endCal.get(java.util.Calendar.DAY_OF_YEAR)
+    if (!sameDay) {
+        errors.add("En booking kan ikke strekke seg over flere dager")
+    }
+
     val suspension = getActiveSuspensionForUser(booking.userId)
     if (suspension != null) {
         val fmt = SimpleDateFormat("dd.MM.yyyy")
