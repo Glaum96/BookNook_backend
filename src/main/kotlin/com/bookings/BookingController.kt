@@ -9,6 +9,10 @@ import com.bookings.model.getUserBookingsFromDB
 import com.bookings.model.postBookingToDB
 import com.bookings.model.putBookingInDB
 import com.google.gson.Gson
+import com.login.TokenService
+import com.login.UserService
+import com.rules.model.getPeriodStart
+import com.rules.model.getRulesFromDB
 import com.rules.model.validateBookingAgainstRules
 import com.users.UserUtil
 import org.springframework.beans.factory.annotation.Autowired
@@ -94,6 +98,51 @@ class UpdateBookingController {
         }
         return if (success) ResponseEntity(mapOf("success" to true), HttpStatus.OK)
         else ResponseEntity(mapOf("success" to false, "errors" to listOf("Oppdatering feilet")), HttpStatus.INTERNAL_SERVER_ERROR)
+    }
+}
+
+@RestController
+@RequestMapping("/api/myQuotaStatus")
+class MyQuotaStatusController {
+
+    @Autowired
+    private lateinit var tokenService: TokenService
+
+    @Autowired
+    private lateinit var userService: UserService
+
+    @GetMapping
+    fun getMyQuotaStatus(
+        @RequestHeader("Authorization") authHeader: String
+    ): ResponseEntity<Map<String, Any?>> {
+        val token = authHeader.removePrefix("Bearer ").trim()
+        val username = tokenService.getUsernameFromToken(token)
+        val userId = userService.findUserByUsername(username)?.id
+            ?: return ResponseEntity(mapOf("enabled" to false), HttpStatus.UNAUTHORIZED)
+
+        val rule = getRulesFromDB().find { it.id == "MAX_HOURS_PER_PERIOD" }
+            ?: return ResponseEntity(mapOf("enabled" to false), HttpStatus.OK)
+
+        if (!rule.enabled) {
+            return ResponseEntity(mapOf("enabled" to false), HttpStatus.OK)
+        }
+
+        val periodStart = getPeriodStart(rule)
+        val usedHours = getUserBookingsFromDB(userId, true)
+            .filter { !it.startTime.before(periodStart) }
+            .sumOf { (it.endTime.time - it.startTime.time) / 3_600_000.0 }
+
+        return ResponseEntity(
+            mapOf(
+                "enabled" to true,
+                "usedHours" to usedHours,
+                "maxHours" to rule.value,
+                "periodType" to rule.periodType,
+                "periodDays" to rule.periodDays,
+                "periodStart" to periodStart.toInstant().toString()
+            ),
+            HttpStatus.OK
+        )
     }
 }
 

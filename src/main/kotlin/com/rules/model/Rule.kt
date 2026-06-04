@@ -5,5 +5,7 @@ data class Rule(
     val name: String,
     val description: String,
     val enabled: Boolean,
-    val value: Int
+    val value: Int,
+    val periodType: String? = null,
+    val periodDays: Int? = null
 )

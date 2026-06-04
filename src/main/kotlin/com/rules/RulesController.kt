@@ -21,7 +21,7 @@ class RulesController {
         return getRulesFromDB()
     }
 
-    data class UpdateRuleRequest(val enabled: Boolean, val value: Int? = null)
+    data class UpdateRuleRequest(val enabled: Boolean, val value: Int? = null, val periodType: String? = null, val periodDays: Int? = null)
 
     @PutMapping("/{ruleId}")
     fun updateRule(
@@ -33,7 +33,7 @@ class RulesController {
             return ResponseEntity(mapOf("success" to false, "message" to "Forbidden"), HttpStatus.FORBIDDEN)
         }
 
-        updateRuleInDB(ruleId, body.enabled, body.value)
+        updateRuleInDB(ruleId, body.enabled, body.value, body.periodType, body.periodDays)
         return ResponseEntity(mapOf("success" to true), HttpStatus.OK)
     }
 }
